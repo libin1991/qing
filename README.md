@@ -1,1 +1,1 @@
-![logo](https://raw.githubusercontent.com/veedrin/qing/master/logo/logo.png)
+![logo](https://raw.githubusercontent.com/veedrin/qing/master/doc/logo/logo.png)
