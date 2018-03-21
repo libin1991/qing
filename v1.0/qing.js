@@ -1,6 +1,6 @@
 /**
  * @author      : 马蹄疾
- * @date        : 2018-01-27
+ * @date        : 2018-03-23
  * @version     : v1.0
  * @description : 一个UI组件库
  * @repository  : https://github.com/veedrin/qing
@@ -158,8 +158,10 @@ class DatePicker extends TimeCommon {
             }
         });
         document.addEventListener('click', function() {
-            curtainCL.contains('active') ? curtainCL.remove('active') : '';
-            arrowCL.contains('active') ? arrowCL.remove('active') : '';
+            if (curtainCL.contains('active')) {
+                arrowCL.remove('active');
+                curtainCL.remove('active');
+            }
         });
     }
 
@@ -527,8 +529,10 @@ class TimePicker extends TimeCommon {
             }
         });
         document.addEventListener('click', function() {
-            curtainCL.contains('active') ? curtainCL.remove('active') : '';
-            arrowCL.contains('active') ? arrowCL.remove('active') : '';
+            if (curtainCL.contains('active')) {
+                arrowCL.remove('active');
+                curtainCL.remove('active');
+            }
         });
     }
 
@@ -1355,3 +1359,1263 @@ class Tree {
         }
     }
 }
+
+////////// * 级联选择器组件类 * //////////
+
+class Cascader {
+    constructor({
+        id = 'cascader',
+        data = [],
+        searchable,
+        debounce = 300,
+        trigger = 'click',
+        seperator = ' / ',
+        callback = () => {},
+    } = {}) {
+        this.$mount = document.querySelector(`#${id}`);
+        this.data = data;
+        // 是否提供搜索框
+        this.searchable = searchable;
+        // 输入防抖
+        this.debounce = debounce;
+        // 显示级联的触发方式
+        this.trigger = trigger;
+        // 分隔符
+        this.seperator = seperator;
+        this.callback = callback;
+        // 缓存用户选择的路径
+        this.path = [];
+        // queue的hash属性名，queue标记级联的层级
+        this.queue = Date.now();
+        this.eventType = this.trigger === 'hover' ? 'mouseenter' : 'click';
+        // 缓存所有的路径
+        this.pathPool = [];
+        // 是否被搜索结果填充
+        this.withResult = false;
+        this.init();
+    }
+
+    init() {
+        // 参数检查
+        this.verifyOptions();
+        // 给data添加queue
+        this.buildQueue(this.data);
+        this.render();
+        this.$trough = this.$mount.querySelector('.trough');
+        this.$view = this.$trough.querySelector('.view');
+        this.$curtain = this.$mount.querySelector('.curtain');
+        // 第一个board以及子元素
+        this.$board = this.$curtain.querySelector('.board');
+        this.$trunks = this.$board.querySelectorAll('.trunk');
+        this.$subBoard = this.$board.querySelector('.board');
+        this.$troughEvent();
+        this.$rowEvent(this.$board);
+        // 渲染搜索框，则添加事件
+        if (this.searchable === true) {
+            this.$search = this.$curtain.querySelector('.search');
+            this.iterateAllPath();
+            this.$searchEvent();
+        }
+    }
+
+    buildQueue(data, queue = '') {
+        for (let i = 0; i < data.length; i++) {
+            const item = data[i];
+            const sub = item.sub;
+            const newQueue = `${queue}${i}`;
+            item[this.queue] = newQueue;
+            if (sub) {
+                this.buildQueue(sub, newQueue);
+            }
+        }
+    }
+
+    render() {
+        const tpl = `
+            <div class="qing qing-cascader">
+                <div class="trough">
+                    <div class="view"></div>
+                    <span class="arrow">^</span>
+                </div>
+                <div class="curtain">
+                    <div class="board">
+                        ${this.renderCascade(this.data)}
+                    </div>
+                    ${this.searchable === true ? '<div class="control"><input class="search" type="text"></div>' : ''}
+                </div>
+            </div>
+        `;
+        this.$mount.innerHTML = tpl;
+    }
+
+    renderCascade(data) {
+        let tpl = '';
+        for (const item of data) {
+            if (item.sub) {
+                tpl += `
+                    <div class="row trunk" data-v="${item[this.queue]}">
+                        <span class="label">${item.label}</span>
+                        <span class="arrow">﹥</span>
+                    </div>
+                `;
+            } else {
+                tpl += `
+                    <div class="row leaf" data-v="${item[this.queue]}">
+                        <span class="label">${item.label}</span>
+                    </div>
+                `;
+            }
+        }
+        tpl += '<div class="board"></div>';
+        return tpl;
+    }
+
+    $troughEvent() {
+        const self = this;
+        const curtainCL = this.$curtain.classList;
+        const arrowCL = this.$trough.querySelector('.view').classList;
+        this.$trough.addEventListener('click', function(event) {
+            event.stopPropagation();
+            arrowCL.toggle('active');
+            if (curtainCL.contains('active')) {
+                curtainCL.remove('active');
+            } else {
+                curtainCL.add('active');
+                // 再次打开curtain需要初始化
+                if (self.withResult) {
+                    // 清除搜索结果
+                    self.clearResultAndRefill();
+                } else {
+                    // 清除级联
+                    self.removeTrunkActive(self.$trunks);
+                    self.$subBoard.innerHTML = '';
+                }
+            }
+        });
+        document.addEventListener('click', function() {
+            if (curtainCL.contains('active')) {
+                arrowCL.remove('active');
+                curtainCL.remove('active');
+            }
+        });
+    }
+
+    $rowEvent($board) {
+        const self = this;
+        const $trunks = $board.querySelectorAll('.trunk');
+        const $leafs = $board.querySelectorAll('.leaf');
+        const $subBoard = $board.querySelector('.board');
+        for (let i = 0; i < $trunks.length; i++) {
+            const $trunk = $trunks[i];
+            const v = $trunk.dataset.v;
+            const label = $trunk.querySelector('.label').innerHTML;
+            const CL = $trunk.classList;
+            $trunk.addEventListener(this.eventType, function(event) {
+                event.stopPropagation();
+                // 遍历清除trunk的active
+                self.removeTrunkActive($trunks);
+                // 当前trunk变成active
+                CL.add('active');
+                // 构建路径
+                self.buildPath(v.length, label, false);
+                // 找到子数据
+                const sub = self.findSubByQueue(self.data, v);
+                // 填充子board
+                $subBoard.innerHTML = self.renderCascade(sub);
+                // 添加事件
+                self.$rowEvent($subBoard);
+            });
+        }
+        if (this.trigger === 'hover') {
+            for (let i = 0; i < $leafs.length; i++) {
+                $leafs[i].addEventListener('mouseenter', function() {
+                    self.removeTrunkActive($trunks);
+                    $subBoard.innerHTML = '';
+                });
+            }
+            // 离开curtain
+            this.$curtain.addEventListener('mouseleave', function() {
+                self.removeTrunkActive(self.$trunks);
+                self.$subBoard.innerHTML = '';
+            });
+        }
+        // 树叶点击事件，结束选择
+        this.endClickEvent($leafs);
+    }
+
+    endClickEvent($leafs) {
+        const self = this;
+        for (let i = 0; i < $leafs.length; i++) {
+            const $leaf = $leafs[i];
+            const length = $leaf.dataset.v.length;
+            const label = $leaf.querySelector('.label').innerHTML;
+            $leafs[i].addEventListener('click', function(event) {
+                event.stopPropagation();
+                // 渲染路径
+                self.buildPath(length, label, true);
+            });
+        }
+    }
+
+    findSubByQueue(data, queue) {
+        const n = Number.parseInt(queue.charAt(0));
+        for (let i = 0; i < data.length; i++) {
+            if (i === n) {
+                if (queue.length > 1) {
+                    return this.findSubByQueue(data[i].sub, queue.slice(1));
+                } else {
+                    return data[i].sub;
+                }
+            }
+        }
+    }
+
+    buildPath(level, label, render) {
+        if (this.path.length < level) {
+            // 往下选择，直接push
+            this.path.push(label);
+        } else {
+            // 退回选择，根据退回长度删除path元素，再push
+            this.path = [...this.path.slice(0, level - 1), label];
+        }
+        if (render) {
+            this.renderPath();
+        }
+    }
+
+    renderPath() {
+        const path = this.path.join(this.seperator);
+        this.$view.innerHTML = path;
+        // 回调
+        this.callback(path);
+        // 清空path容器
+        this.path = [];
+        this.$trough.click();
+        this.removeTrunkActive(this.$trunks);
+        this.$subBoard.innerHTML = '';
+    }
+
+    removeTrunkActive($trunks) {
+        for (const $trunk of $trunks) {
+            const CL = $trunk.classList;
+            if (CL.contains('active')) {
+                CL.remove('active');
+                break;
+            }
+        }
+    }
+
+    iterateAllPath() {
+        const self = this;
+        let temp = [];
+        const data = pathPush([...this.data]);
+        function pathPush(data, arr = []) {
+            for (const item of data) {
+                item.path = [];
+                // 将路径存入item中的数组
+                item.path.push(...arr, item.label);
+            }
+            return data;
+        }
+        function recursive(data) {
+            for (const item of data) {
+                const sub = item.sub;
+                if (sub) {
+                    // 将下一层放入temp
+                    temp.push(...pathPush(sub, item.path));
+                } else {
+                    // 没有下一层则路径结束
+                    self.pathPool.push(item.path.join(self.seperator));
+                }
+            }
+            if (temp.length) {
+                // 重新初始化
+                data = temp;
+                temp = [];
+                recursive(data);
+            }
+        }
+        recursive(data);
+    }
+
+    $searchEvent() {
+        const self = this;
+        let timer;
+        this.$search.addEventListener('input', function(event) {
+            // 输入防抖
+            if (timer) {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(() => {
+                const value = event.target.value.trim();
+                if (value) {
+                    self.searchAction(value);
+                } else {
+                    self.clearResultAndRefill();
+                }
+            }, self.debounce);
+        });
+        // 阻止冒泡
+        this.$search.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    }
+
+    searchAction(value) {
+        const result = [];
+        let tpl = '';
+        const reg = new RegExp(value, 'i');
+        for (const item of this.pathPool) {
+            const match = item.match(reg);
+            if (!match) {
+                continue;
+            }
+            result.push(item);
+            const index = match.index;
+            let [left, center, right] = [item.slice(0, index), match[0], item.slice(index + value.length)];
+            // 如果标签内第一个字符是空格，空格会被忽略
+            if (right && right.startsWith(' ')) {
+                right = `&nbsp;${right.trimLeft()}`;
+            }
+            tpl += `
+                <div class="result">
+                    ${left ? `<span class="s">${left}</span>` : ''}
+                    <span class="s highlight">${center}</span>
+                    ${right ? `<span class="s">${right}</span>` : ''}
+                </div>
+            `;
+        }
+        if (!tpl) {
+            tpl = '<div class="null">No Result</div>';
+        }
+        this.$board.innerHTML = tpl;
+        // 搜索结果填充board
+        this.withResult = true;
+        if (result.length) {
+            this.$resultEvent(result);
+        }
+    }
+
+    $resultEvent(result) {
+        const self = this;
+        const $results = this.$board.querySelectorAll('.result');
+        let delay = 100;
+        for (let i = 0; i < $results.length; i++) {
+            const $result = $results[i];
+            // 结果显示动画
+            setTimeout(() => {
+                $result.classList.add('active');
+            }, delay);
+            delay += 30;
+            $result.addEventListener('click', function(event) {
+                event.stopPropagation();
+                const res = result[i];
+                self.$view.innerHTML = res;
+                // 回调
+                self.callback(res);
+                // 关闭curtain
+                self.$trough.click();
+                // 清除搜索结果
+                self.clearResultAndRefill();
+            });
+        }
+    }
+
+    clearResultAndRefill() {
+        this.$board.innerHTML = this.renderCascade(this.data);
+        this.$trunks = this.$board.querySelectorAll('.trunk');
+        this.$subBoard = this.$board.querySelector('.board');
+        this.$rowEvent(this.$board);
+        this.$search.value = '';
+        this.withResult = false;
+    }
+
+    verifyOptions() {
+        // $mount
+        if (!this.$mount) {
+            throw new Error('[Qing error]: 级联选择器组件无法找到挂载点');
+        }
+        // data
+        if (Object.prototype.toString.call(this.data) !== '[object Array]') {
+            this.data = [];
+            console.warn('[Qing warn]: 级联选择器组件的data必须是数组');
+        }
+        // debounce
+        if (typeof this.debounce !== 'number') {
+            this.debounce = 300;
+            console.warn('[Qing warn]: 级联选择器组件的debounce必须是数字');
+        }
+        // seperator
+        if (typeof this.seperator !== 'string') {
+            this.seperator = ' / ';
+            console.warn('[Qing warn]: 级联选择器组件的seperator必须是字符串');
+        }
+        // callback
+        if (typeof this.callback !== 'function') {
+            this.callback = () => {};
+            console.warn('[Qing warn]: 级联选择器组件的callback必须是函数');
+        }
+    }
+}
+
+////////// *表单公共类* //////////
+
+class FormCommon {
+    constructor() {}
+
+    $formFormat($forms) {
+        for (let i = 0; i < $forms.length; i++) {
+            const $form = $forms[i];
+            // 缓存display属性
+            const display = getComputedStyle($form).display;
+            // 替换不符合要求的tag
+            if (['input', 'select', 'option', 'button'].includes($form.tagName.toLowerCase())) {
+                const div = document.createElement('div');
+                // 复原display属性
+                if (display === 'inline' || display === 'inline-block') {
+                    div.style.display = 'inline-block';
+                } else {
+                    div.style.display = display;
+                }
+                // 转移class
+                for (const className of $form.classList) {
+                    div.classList.add(className);
+                }
+                // 替换DOM的旧元素
+                $form.parentElement.replaceChild(div, $form);
+                // 替换数组的旧元素
+                $forms[i] = div;
+            } else {
+                // 不允许display属性为inline
+                if (display === 'inline') {
+                    $form.style.display = 'inline-block';
+                }
+                // 清空元素里面的内容
+                $form.innerHTML = '';
+            }
+        }
+    }
+}
+
+////////// *多选框组件类* //////////
+
+class Checkbox extends FormCommon {
+    constructor({
+        classes = 'checkbox',
+        indeterminateIndex,
+        data = [],
+        callback = () => {},
+    } = {}) {
+        // 继承父类的this对象
+        super();
+        this.$mounts = [...document.querySelectorAll(`.${classes}`)];
+        // 全选全不选checkbox的索引
+        this.indeterminateIndex = indeterminateIndex;
+        this.data = data;
+        this.callback = callback;
+        // checkbox数组
+        this.$checkboxs = [];
+        // checkbox个数
+        this.count = this.$mounts.length;
+        this.init();
+    }
+
+    init() {
+        // 检查参数
+        this.verifyOptions();
+        // 检查标签是否符合要求
+        this.$formFormat(this.$mounts);
+        // 渲染元素
+        this.render();
+        // 塑造数据
+        this.shapeData();
+        // 渲染样式
+        this.renderStyle();
+        // checkbox事件
+        if (this.$indeterminate) {
+            this.$indeterminateEvent();
+            this.$determinateEvent();
+        } else {
+            this.$checkboxEvent();
+        }
+    }
+
+    render() {
+        for (let i = 0, count = this.count; i < count; i++) {
+            const $mount = this.$mounts[i];
+            $mount.innerHTML = '<div class="qing qing-checkbox"></div>';
+            const $checkbox = $mount.firstElementChild;
+            // 取出全选全不选checkbox
+            if (this.indeterminateIndex === i) {
+                this.$indeterminate = $checkbox;
+                // 数量减一个
+                this.count--;
+                delete this.indeterminateIndex;
+                continue;
+            }
+            this.$checkboxs.push($checkbox);
+        }
+        delete this.$mounts;
+    }
+
+    shapeData() {
+        // 锁定data的长度
+        this.data.length = this.count;
+        for (let i = 0; i < this.count; i++) {
+            if (Object.prototype.toString.call(this.data[i]) !== '[object Object]') {
+                this.data[i] = {
+                    checked: false,
+                    disabled: false,
+                };
+            } else {
+                const item = this.data[i];
+                if (item.checked === undefined) {
+                    item.checked = false;
+                }
+                if (item.disabled === undefined) {
+                    item.disabled = false;
+                }
+            }
+        }
+    }
+
+    renderStyle() {
+        for (let i = 0; i < this.count; i++) {
+            const item = this.data[i];
+            const CL = this.$checkboxs[i].classList;
+            if (item.checked !== CL.contains('checked')) {
+                CL.toggle('checked');
+            }
+            if (item.disabled !== CL.contains('disabled')) {
+                CL.toggle('disabled');
+            }
+        }
+    }
+
+    $checkboxEvent() {
+        const self = this;
+        for (let i = 0; i < this.count; i++) {
+            const $checkbox = this.$checkboxs[i];
+            const CL = $checkbox.classList;
+            $checkbox.addEventListener('click', function(event) {
+                event.stopPropagation();
+                // 禁用的checkbox不触发事件
+                if (self.data[i].disabled === true) {
+                    return;
+                }
+                self.$checkboxAction(CL, i);
+            });
+        }
+    }
+
+    $indeterminateEvent() {
+        const self = this;
+        const indeCL = this.$indeterminate.classList;
+        this.$indeterminate.addEventListener('click', function(event) {
+            event.stopPropagation();
+            // 全选或者全不选
+            if (indeCL.contains('checked')) {
+                for (let i = 0; i < self.count; i++) {
+                    // 禁用的checkbox不触发事件
+                    if (self.data[i].disabled === true) {
+                        continue;
+                    }
+                    const deCL = self.$checkboxs[i].classList;
+                    deCL.contains('checked') ? deCL.remove('checked') : '';
+                    // 数据变更
+                    self.data[i].checked = false;
+                }
+            } else {
+                for (let i = 0; i < self.count; i++) {
+                    // 禁用的checkbox不触发事件
+                    if (self.data[i].disabled === true) {
+                        continue;
+                    }
+                    const deCL = self.$checkboxs[i].classList;
+                    !deCL.contains('checked') ? deCL.add('checked') : '';
+                    // 数据变更
+                    self.data[i].checked = true;
+                }
+            }
+            // 自己的action
+            indeCL.contains('somechecked') ? indeCL.remove('somechecked') : '';
+            indeCL.toggle('checked');
+            // 全选全不选时，回调的第二个参数是'indeterminate'
+            self.callback(self.data, 'indeterminate');
+        });
+    }
+
+    $determinateEvent() {
+        const self = this;
+        const indeCL = self.$indeterminate.classList;
+        for (let i = 0; i < this.count; i++) {
+            const $determinate = this.$checkboxs[i];
+            const deCL = $determinate.classList;
+            $determinate.addEventListener('click', function(event) {
+                event.stopPropagation();
+                // 禁用的checkbox不触发事件
+                if (self.data[i].disabled === true) {
+                    return;
+                }
+                const checked = !deCL.contains('checked');
+                let noneFlag = true;
+                let allFlag = true;
+                for (const $item of self.$checkboxs) {
+                    if ($item === this) {
+                        continue;
+                    }
+                    if ($item.classList.contains('checked')) {
+                        noneFlag ? noneFlag = false : '';
+                    } else {
+                        allFlag ? allFlag = false : '';
+                    }
+                    if (!noneFlag && !allFlag) {
+                        break;
+                    }
+                }
+                if (checked && allFlag) {
+                    indeCL.contains('somechecked') ? indeCL.remove('somechecked') : '';
+                    !indeCL.contains('checked') ? indeCL.add('checked') : '';
+                } else if (!checked && noneFlag) {
+                    indeCL.contains('checked') ? indeCL.remove('checked') : '';
+                    indeCL.contains('somechecked') ? indeCL.remove('somechecked') : '';
+                } else {
+                    indeCL.contains('checked') ? indeCL.remove('checked') : '';
+                    !indeCL.contains('somechecked') ? indeCL.add('somechecked') : '';
+                }
+                // 自己的action
+                self.$checkboxAction(deCL, i);
+            });
+        }
+    }
+
+    $checkboxAction(CL, i) {
+        if (CL.contains('checked')) {
+            CL.remove('checked');
+            this.data[i].checked = false;
+            // 回调
+            this.callback(this.data, i);
+        } else {
+            CL.add('checked');
+            this.data[i].checked = true;
+            // 回调
+            this.callback(this.data, i);
+        }
+    }
+
+    updateData(data) {
+        this.data = data;
+        this.shapeData();
+        this.renderStyle();
+    }
+
+    verifyOptions() {
+        // $mounts
+        if (!this.$mounts) {
+            throw new Error('[Qing error]: 多选框组件无法找到挂载点');
+        }
+        // indeterminateIndex
+        if (this.indeterminateIndex !== undefined) {
+            if (typeof this.indeterminateIndex !== 'number') {
+                delete this.indeterminateIndex;
+                console.warn('[Qing warn]: 多选框组件的indeterminateIndex必须是数字');
+            } else if (this.indeterminateIndex >= this.count || this.indeterminateIndex < 0) {
+                this.indeterminateIndex = 0;
+                console.warn('[Qing warn]: 多选框组件的indeterminateIndex必须在多选框个数之内');
+            } else if (!Number.isInteger(this.indeterminateIndex)) {
+                this.indeterminateIndex = 0;
+                console.warn('[Qing warn]: 多选框组件的indeterminateIndex必须是整数');
+            }
+        }
+        // data
+        if (Object.prototype.toString.call(this.data) !== '[object Array]') {
+            this.data = [];
+            console.warn('[Qing warn]: 多选框组件的data必须是数组');
+        }
+        // callback
+        if (typeof this.callback !== 'function') {
+            this.callback = () => {};
+            console.warn('[Qing warn]: 多选框组件的callback必须是函数');
+        }
+    }
+}
+
+////////// *单选框组件类* //////////
+
+class Radio extends FormCommon {
+    constructor({
+        classes = 'radio',
+        data = [],
+        callback = () => {},
+    } = {}) {
+        // 继承父类的this对象
+        super();
+        this.$mounts = document.querySelectorAll(`.${classes}`);
+        this.data = data;
+        this.callback = callback;
+        // radio数组
+        this.$radios = [];
+        // radio个数
+        this.count = this.$mounts.length;
+        // 被选中的radio索引
+        this.checkedIndex;
+        this.init();
+    }
+
+    init() {
+        // 检查参数
+        this.verifyOptions();
+        // 检查标签是否符合要求
+        this.$formFormat(this.$mounts);
+        // 渲染元素
+        this.render();
+        // 塑造数据
+        this.shapeData();
+        // 渲染样式
+        this.renderStyle();
+        // radio事件
+        this.$radioEvent();
+    }
+
+    render() {
+        for (let i = 0, count = this.count; i < count; i++) {
+            const $mount = this.$mounts[i];
+            $mount.innerHTML = '<div class="qing qing-radio"></div>';
+            const $radio = $mount.firstElementChild;
+            this.$radios.push($radio);
+        }
+        delete this.$mounts;
+    }
+
+    shapeData() {
+        // 锁定data的长度
+        this.data.length = this.count;
+        for (let i = 0; i < this.count; i++) {
+            if (Object.prototype.toString.call(this.data[i]) !== '[object Object]') {
+                this.data[i] = {
+                    checked: false,
+                    disabled: false,
+                };
+            } else {
+                const item = this.data[i];
+                // 检查disabled，如果radio同时checked和disabled，则取消checked
+                if (item.disabled !== true && item.disabled !== false) {
+                    item.disabled = false;
+                } else if (item.disabled === true && item.checked === true) {
+                    console.warn('[Qing warn]: 置灰的单选框radio不允许checked');
+                    item.checked = false;
+                }
+                // 检查checked
+                if (item.checked !== true && item.checked !== false) {
+                    item.checked = false;
+                } else if (item.checked === true) {
+                    if (this.checkedIndex === undefined) {
+                        this.checkedIndex = i;
+                    } else {
+                        console.warn('[Qing warn]: 单选框radio只能有一个checked');
+                        item.checked = false;
+                    }
+                }
+            }
+        }
+        if (this.checkedIndex === undefined) {
+            console.warn('[Qing warn]: 单选框radio必须有一个checked');
+            this.data[0].checked = true;
+            this.checkedIndex = 0;
+        }
+    }
+
+    renderStyle() {
+        for (let i = 0; i < this.count; i++) {
+            const item = this.data[i];
+            const CL = this.$radios[i].classList;
+            if (item.checked !== CL.contains('checked')) {
+                CL.toggle('checked');
+            }
+            if (item.disabled !== CL.contains('disabled')) {
+                CL.toggle('disabled');
+            }
+        }
+    }
+
+    $radioEvent() {
+        const self = this;
+        for (let i = 0; i < this.count; i++) {
+            const $radio = this.$radios[i];
+            const CL = $radio.classList;
+            $radio.addEventListener('click', function(event) {
+                event.stopPropagation();
+                // 置灰的元素不触发事件
+                if (self.data[i].disabled === true) {
+                    return;
+                }
+                if (!CL.contains('checked')) {
+                    // 上一个checked的action
+                    self.$radios[self.checkedIndex].classList.remove('checked');
+                    self.data[self.checkedIndex].checked = false;
+                    // 改变指针
+                    self.checkedIndex = i;
+                    // 自己的action
+                    CL.add('checked');
+                    self.data[i].checked = true;
+                    self.callback(self.data, i);
+                }
+            });
+        }
+    }
+
+    updateData(data) {
+        this.data = data;
+        // 重置指针
+        this.checkedIndex = undefined;
+        this.shapeData();
+        this.renderStyle();
+    }
+
+    verifyOptions() {
+        // $mounts
+        if (!this.$mounts) {
+            throw new Error('[Qing error]: 单选框组件无法找到挂载点');
+        }
+        // data
+        if (Object.prototype.toString.call(this.data) !== '[object Array]') {
+            this.data = [];
+            console.warn('[Qing warn]: 单选框组件的data必须是数组');
+        }
+        // callback
+        if (typeof this.callback !== 'function') {
+            this.callback = () => {};
+            console.warn('[Qing warn]: 单选框组件的callback必须是函数');
+        }
+    }
+}
+
+////////// *开关组件类* //////////
+
+class Switch extends FormCommon {
+    constructor({
+        id = 'switch',
+        checked = false,
+        disabled = false,
+        size = 'default',
+        callback = () => {},
+    } = {}) {
+        // 继承父类的this对象
+        super();
+        this.$mount = document.querySelector(`#${id}`);
+        // 是否选中
+        this.checked = checked;
+        // 是否置灰
+        this.disabled = disabled;
+        // 两种规格大小，default和small
+        this.size = size;
+        this.callback = callback;
+        this.init();
+    }
+
+    init() {
+        // 检查参数
+        this.verifyOptions();
+        // 用一个变量缓存，确保元素被替换后，依然能够找到引用地址
+        const nodeList = [this.$mount];
+        this.$formFormat(nodeList);
+        this.$mount = nodeList[0];
+        this.render();
+        this.$switchEvent();
+    }
+
+    render() {
+        // 不同size的class不一样
+        const classBySize = this.size === 'small' ? 'qing qing-switch switch-small' : 'qing qing-switch';
+        let classList = [classBySize];
+        this.checked === true ? classList.push('checked') : '';
+        this.disabled === true ? classList.push('disabled') : '';
+        classList = classList.join(' ');
+        const tpl = `
+            <div class="${classList}">
+                <span class="${this.checked ? 'button checked' : 'button'}"></span>
+            </div>
+        `;
+        this.$mount.innerHTML = tpl;
+        this.$switch = this.$mount.querySelector(`.qing-switch`);
+    }
+
+    $switchEvent() {
+        const self = this;
+        const switchCL = this.$switch.classList;
+        const buttonCL = this.$switch.querySelector('.button').classList;
+        this.$switch.addEventListener('click', function(event) {
+            event.stopPropagation();
+            // 置灰的元素不触发事件
+            if (self.disabled === true) {
+                return;
+            }
+            buttonCL.toggle('checked');
+            if (switchCL.contains('checked')) {
+                switchCL.remove('checked');
+                self.checked = false;
+            } else {
+                switchCL.add('checked');
+                self.checked = true;
+            }
+            self.callback(self.checked);
+        });
+    }
+
+    verifyOptions() {
+        // $mount
+        if (!this.$mount) {
+            throw new Error('[Qing error]: 开关组件无法找到挂载点');
+        }
+        // callback
+        if (typeof this.callback !== 'function') {
+            this.callback = () => {};
+            console.warn('[Qing warn]: 开关组件的callback必须是函数');
+        }
+    }
+}
+
+////////// *计数器组件类* //////////
+
+class InputNumber extends FormCommon {
+    constructor({
+        id = 'input-number',
+        initValue = 1,
+        step = 1,
+        min,
+        max,
+        size = 'default',
+        disabled = false,
+        callback = () => {},
+    } = {}) {
+        // 继承父类的this对象
+        super();
+        this.$mount = document.querySelector(`#${id}`);
+        // 初始数值
+        this.initValue = initValue;
+        // 缓存上一个数值
+        this.oldValue = this.initValue;
+        // 计数器步长
+        this.step = step;
+        // 允许的最小值，需要考虑到初始值和步长
+        min !== undefined ? this.min = (this.initValue - min) % this.step : '';
+        // 允许的最大值，需要考虑到初始值和步长
+        max !== undefined ? this.max = max - ((max - this.initValue) % this.step) : '';
+        // 两种规格大小，default和small
+        this.size = size;
+        this.disabled = disabled;
+        this.callback = callback;
+        this.init();
+    }
+
+    init() {
+        // 检查参数
+        this.verifyOptions();
+        // 用一个变量缓存，确保元素被替换后，依然能够找到引用地址
+        const nodeList = [this.$mount];
+        this.$formFormat(nodeList);
+        this.$mount = nodeList[0];
+        this.render();
+        if (this.disabled !== true) {
+            this.$decreaseEvent();
+            this.$increaseEvent();
+            this.$monitorEvent();
+        }
+    }
+
+    render() {
+        // 不同size的class不一样
+        const classList = this.size === 'small' ? 'qing qing-input-number input-number-small' : 'qing qing-input-number';
+        let tpl;
+        if (this.disabled !== true) {
+            tpl = `
+                <div class="${classList}">
+                    <div class="decrease">-</div>
+                    <input class="monitor" type="text">
+                    <div class="increase">+</div>
+                </div>
+            `;
+        } else {
+            tpl = `
+                <div class="${classList}">
+                    <div class="decrease disabled">-</div>
+                    <input class="monitor" type="text" disabled>
+                    <div class="increase disabled">+</div>
+                </div>
+            `;
+        }
+        this.$mount.innerHTML = tpl;
+        this.$monitor = this.$mount.querySelector('.monitor');
+        this.$decrease = this.$mount.querySelector('.decrease');
+        this.$increase = this.$mount.querySelector('.increase');
+        // 初始值
+        this.$monitor.value = this.initValue;
+    }
+
+    $decreaseEvent() {
+        const self = this;
+        const deCL = this.$decrease.classList;
+        const inCL = this.$increase.classList;
+        this.$decrease.addEventListener('click', function(event) {
+            event.stopPropagation();
+            // 置灰的元素不触发事件
+            if (deCL.contains('disabled')) {
+                return;
+            }
+            const value = Number.parseInt(self.$monitor.value) - self.step;
+            // 如果比min小，则disabled；同时清除另一边的disabled，如果有的话
+            inCL.contains('disabled') ? inCL.remove('disabled') : '';
+            if (self.min !== undefined && value <= self.min) {
+                deCL.add('disabled');
+            }
+            self.$monitor.value = value;
+            self.callback(value, self.oldValue, 'decrease');
+            // 缓存该数值
+            self.oldValue = value;
+        });
+    }
+
+    $increaseEvent() {
+        const self = this;
+        const deCL = this.$decrease.classList;
+        const inCL = this.$increase.classList;
+        this.$increase.addEventListener('click', function(event) {
+            event.stopPropagation();
+            // 置灰的元素不触发事件
+            if (inCL.contains('disabled')) {
+                return;
+            }
+            const value = Number.parseInt(self.$monitor.value) + self.step;
+            // 如果比max大，则disabled；同时清除另一边的disabled，如果有的话
+            deCL.contains('disabled') ? deCL.remove('disabled') : '';
+            if (self.max !== undefined && value >= self.max) {
+                inCL.add('disabled');
+            }
+            self.$monitor.value = value;
+            self.callback(value, self.oldValue, 'increase');
+            // 缓存该数值
+            self.oldValue = value;
+        });
+    }
+
+    $monitorEvent() {
+        const self = this;
+        const deCL = this.$decrease.classList;
+        const inCL = this.$increase.classList;
+        this.$monitor.addEventListener('change', function(event) {
+            event.stopPropagation();
+            const result = this.value.trim();
+            let value = Number(result);
+            // 输入非数字不触发事件
+            if (Number.isNaN(value)) {
+                this.value = self.oldValue;
+                return;
+            }
+            // 值为空时不触发事件
+            if (result === '') {
+                return;
+            }
+            // 判断当前值的是否超过最值
+            if (self.min !== undefined && value <= self.min) {
+                deCL.add('disabled');
+                // 小于最小值，则等于最小值
+                value = self.min;
+                this.value = value;
+            } else if (self.max !== undefined && value >= self.max) {
+                inCL.add('disabled');
+                // 大于最大值，则等于最大值
+                value = self.max;
+                this.value = value;
+            } else {
+                deCL.contains('disabled') ? deCL.remove('disabled') : '';
+                inCL.contains('disabled') ? inCL.remove('disabled') : '';
+            }
+            // 值的增量或减量必须是step的倍数
+            if (value > self.initValue) {
+                const multiple = (value - self.initValue) / self.step;
+                // 不是倍数时改成倍数，数字永远向初始值靠拢
+                if (!Number.isInteger(multiple)) {
+                    value = Number.parseInt(multiple) * self.step + self.initValue;
+                    this.value = value;
+                }
+            } else if (value < self.initValue) {
+                const multiple = (self.initValue - value) / self.step;
+                // 不是倍数时改成倍数，数字永远向初始值靠拢
+                if (!Number.isInteger(multiple)) {
+                    value = Number.parseInt(multiple) * self.step + self.initValue;
+                    this.value = value;
+                }
+            }
+            self.callback(value, self.oldValue, 'input');
+            // 缓存该数值
+            self.oldValue = value;
+        });
+    }
+
+    verifyOptions() {
+        // $mount
+        if (!this.$mount) {
+            throw new Error('[Qing error]: 计数器组件无法找到挂载点');
+        }
+        // initValue
+        if (typeof this.initValue !== 'number') {
+            this.initValue = 1;
+            console.warn('[Qing warn]: 计数器组件的initValue必须是数字');
+        }
+        // step
+        if (typeof this.step !== 'number') {
+            this.step = 1;
+            console.warn('[Qing warn]: 计数器组件的step必须是数字');
+        }
+        // min和max
+        if (this.min !== undefined && Number.isNaN(this.min)) {
+            delete this.min;
+            console.warn('[Qing warn]: 计数器组件的min必须是数字');
+        }
+        if (this.max !== undefined && Number.isNaN(this.max)) {
+            delete this.max;
+            console.warn('[Qing warn]: 计数器组件的max必须是数字');
+        }
+        if (this.min !== undefined && this.max !== undefined && this.min >= this.max) {
+            delete this.min;
+            delete this.max;
+            console.warn('[Qing warn]: 计数器组件的max必须比min大');
+        }
+    }
+}
+
+////////// *输入框组件类* //////////
+
+class Input extends FormCommon {
+    constructor({
+        id = 'input',
+        eventType = 'click',
+        buttonLabel = 'click',
+        debounce = 300,
+        placeholder,
+        clearable = false,
+        callback = () => {},
+    } = {}) {
+        // 继承父类的this对象
+        super();
+        this.$mount = document.querySelector(`#${id}`);
+        // 事件类型：click，input，change
+        this.eventType = eventType;
+        // 只有事件类型是click时才有效
+        this.eventType === 'click' ? this.buttonLabel = buttonLabel : '';
+        // 防抖间隔，只有事件类型是input才有效
+        this.eventType === 'input' ? this.debounce = debounce : '';
+        this.placeholder = placeholder;
+        // 清除按钮
+        this.clearable = clearable;
+        this.callback = callback;
+        this.init();
+    }
+
+    init() {
+        // 检查参数
+        this.verifyOptions();
+        // 用一个变量缓存，确保元素被替换后，依然能够找到引用地址
+        const nodeList = [this.$mount];
+        this.$formFormat(nodeList);
+        this.$mount = nodeList[0];
+        this.render();
+        this.$inputEvent();
+        if (this.clearable === true) {
+            this.$clearEvent();
+        }
+    }
+
+    render() {
+        const classList = this.eventType === 'click' ? 'input click' : 'input';
+        const tpl = `
+            <div class="qing qing-input">
+                <span class="wrap">
+                    <input class="${classList}" type="text" placeholder="${this.placeholder}">
+                    ${this.clearable === true ? '<span class="clear">+</span>' : ''}
+                </span>
+                ${this.eventType === 'click' ? `<button class="button">${this.buttonLabel}</button>` : ''}
+            </div>
+        `;
+        this.$mount.innerHTML = tpl;
+        this.$input = this.$mount.querySelector('.input');
+        if (this.clearable === true) {
+            this.$clear = this.$mount.querySelector('.clear');
+        }
+    }
+
+    $inputEvent() {
+        const self = this;
+        if (this.eventType === 'click') {
+            const $button = this.$mount.querySelector('.button');
+            $button.addEventListener('click', function(event) {
+                event.stopPropagation();
+                self.callback(self.$input.value);
+            });
+        } else if (this.eventType === 'input') {
+            let timer;
+            this.$input.addEventListener('input', function() {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    self.callback(this.value);
+                }, self.debounce);
+            });
+        } else if (this.eventType === 'change') {
+            this.$input.addEventListener('change', function() {
+                self.callback(this.value);
+            });
+        }
+        // $clear按钮的显示隐藏
+        if (this.clearable === true) {
+            const CL = this.$clear.classList;
+            let timer;
+            this.$input.addEventListener('input', function() {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    if (this.value) {
+                        !CL.contains('active') ? CL.add('active') : '';
+                    } else {
+                        CL.contains('active') ? CL.remove('active') : '';
+                    }
+                }, 300);
+            });
+        }
+    }
+
+    $clearEvent() {
+        const self = this;
+        const CL = this.$clear.classList;
+        this.$clear.addEventListener('click', function(event) {
+            event.stopPropagation();
+            self.$input.value = '';
+            // 重新聚焦
+            self.$input.focus();
+            CL.remove('active');
+        });
+    }
+
+    verifyOptions() {
+        // $mount
+        if (!this.$mount) {
+            throw new Error('[Qing error]: 输入框组件无法找到挂载点');
+        }
+        // eventType
+        const typeList = ['input', 'change', 'click'];
+        if (!typeList.includes(this.eventType)) {
+            this.eventType = 'click';
+            console.warn('[Qing warn]: 输入框的eventType不是有效类型');
+        }
+        // debounce
+        if (typeof this.debounce !== 'number') {
+            this.debounce = 300;
+            console.warn('[Qing warn]: 输入框的debounce必须是数字');
+        }
+        // callback
+        if (typeof this.callback !== 'function') {
+            this.callback = () => {};
+            console.warn('[Qing warn]: 输入框的callback必须是函数');
+        }
+    }
+}
+
+export {DatePicker, TimePicker, Paginator, Tree, Cascader, Checkbox, Radio, Switch, InputNumber, Input};
