@@ -1,6 +1,6 @@
 /**
  * @author      : 马蹄疾
- * @date        : 2018-03-22
+ * @date        : 2018-03-23
  * @version     : v1.0
  * @description : 一个UI组件库
  * @repository  : https://github.com/veedrin/qing
