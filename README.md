@@ -1,6 +1,6 @@
 ![logo](https://raw.githubusercontent.com/veedrin/qing/master/doc/logo/logo.png)
 
-<h2 align="center">QingUI</h2>
+<h1 align="center">QingUI</h1>
 
 <br>
 
