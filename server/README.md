@@ -10,7 +10,7 @@
 Access to Script at 'file:///D:/Code/qing/qing.js' from origin 'null' has been blocked by CORS policy: Invalid response. Origin 'null' is therefore not allowed access.
 ```
 
-## 开启静态服务器
+## 如何开启静态服务器
 
 已经安装node
 
