@@ -283,3 +283,47 @@ new Checkbox({
 | data | array | [] | 渲染checked或者disabled的数据 |
 | callback | function(data: array, i: number) | () => {} | 回调，{param}选中后的数据，{param}选中checkbox的索引，如果选中indeterminate，返回"indeterminate" |
 
+## Radio
+
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/radio.png)
+
+Radio是一个单选框组件
+
+### 挂载
+
+```html
+<div class="radio"></div>
+<div class="radio"></div>
+<div class="radio"></div>
+```
+
+### 启动
+
+```javascript
+new Radio({
+    classes: 'radio',
+    data: [
+        {
+            checked: false,
+            disabled: false,
+        },
+        {
+            checked: false,
+            disabled: false,
+        },
+        {
+            checked: false,
+            disabled: false,
+        },
+    ],
+    callback: callback,
+});
+```
+
+### API
+
+| 参数 | 类型 | 默认值 | 说明 |
+|:---|:---|:---|:---|
+| classes | string | "radio" | 挂载标签的class |
+| data | array | [] | 渲染checked或者disabled的数据 |
+| callback | function(data: array, i: number) | () => {} | 回调，{param}选中后的数据，{param}选中的索引 |
