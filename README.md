@@ -177,3 +177,61 @@ new Tree({
 | indent | number | 40 | 每一级的缩进距离，单位为px |
 | expand | string | 'none' | 初始伸展方式，三个可选项，"none"是全部不展开，"all"是全部展开，"first"是第一节展开 |
 | callback | function(data: array) | () => {} | 回调，{param}选中后的数据，checkable为true时生效 |
+
+## Cascader
+
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/cascader.png)
+
+Cascader是一个级联选择器组件
+
+### 挂载
+
+```html
+<div id="cascader"></div>
+```
+
+### 启动
+
+```javascript
+new Cascader({
+    id: 'cascader',
+    data: [
+        {
+            label: '霍思燕',
+            sub: [
+                {
+                    label: '江疏影',
+                },
+                {
+                    label: '倪妮',
+                },
+            ],
+        },
+        {
+            label: '高圆圆',
+            sub: [
+                {
+                    label: '张雨绮',
+                },
+                {
+                    label: '宋佳',
+                },
+            ],
+        },
+    ],
+    searchable: true,
+    callback: callback,
+});
+```
+
+### API
+
+| 参数 | 类型 | 默认值 | 说明 |
+|:---|:---|:---|:---|
+| id | string | "cascader" | 挂载标签的id |
+| data | array | [] | 要渲染的树形数据 |
+| searchable | boolean | false | 是否显示搜索框，即是否可搜索 |
+| debounce | number | 300 | input事件的输入防抖 |
+| trigger | string | "click" | 触发下一级的方式，两个可选项，"click"是鼠标点击触发，"hover"是鼠标悬停触发 |
+| seperator | string | " / " | 分隔符 |
+| callback | function(path: string) | () => {} | 回调，{param}选中的路径 |
