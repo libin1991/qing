@@ -415,3 +415,6 @@ new InputNumber({
 | disabled | boolean | false | 是否置灰 |
 | callback | function(value: number, oldValue: number, type: string) | () => {} | 回调，{param}当前值，{param}上一次的值，{param}计数类型，有"decrease"，"increase"，"input" |
 
+## 说明文档
+
+[DatePicker](https://github.com/veedrin/qing/blob/master/doc/v1.0/DatePicker.md)
