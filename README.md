@@ -74,16 +74,6 @@ new TimePicker({
 
 Paginator是一个分页组件
 
-页码规则：
-
-- 首页和尾页必须展示
-
-- 如果有省略号则首尾只展示一条，当前页前后各展示两条共五条，一边没有空间则叠加到另一边
-
-- 首尾页与当前页五条可以重合
-
-- 跨度大于等于两条才出现省略号
-
 ### 挂载
 
 ```html
@@ -122,8 +112,6 @@ new Paginator({
 ![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/tree.png)
 
 Tree是一个树结构组件
-
-树的展开关闭有动画效果
 
 ### 挂载
 
@@ -175,7 +163,7 @@ new Tree({
 | data | array | [] | 要渲染的树形数据 |
 | checkable | boolean | true | 是否显示checkbox，即是否可选中 |
 | indent | number | 40 | 每一级的缩进距离，单位为px |
-| expand | string | 'none' | 初始伸展方式，三个可选项，"none"是全部不展开，"all"是全部展开，"first"是第一节展开 |
+| expand | string | "none" | 初始伸展方式，三个可选项，"none"是全部不展开，"all"是全部展开，"first"是第一节展开 |
 | callback | function(data: array) | () => {} | 回调，{param}选中后的数据，checkable为true时生效 |
 
 ## Cascader
