@@ -5,6 +5,16 @@
 <br>
 
 > QingUI是一个UI组件库<br>
+> 目前拥有的组件：DatePicker, TimePicker, Paginator, Tree, Cascader, Checkbox, Radio, Switch, InputNumber, Input<br>
+> ES6语法编写，无依赖<br>
+> 原生模块化，Chrome63以上支持，请开启静态服务器预览效果，[静态服务器传送门](https://github.com/veedrin/qing/tree/master/lib)<br>
+> 采用CSS变量配置样式
+
+> **Available For Job**
+
+> **Available For Job**
+
+> **Available For Job**
 
 ## DatePicker
 
@@ -21,6 +31,8 @@ DatePicker是一个日期选择器组件
 ### 启动
 
 ```javascript
+import {DatePicker} from './qing.js';
+
 new DatePicker({
     id: 'date-picker',
     yearRange: [2000, 2020],
@@ -53,6 +65,8 @@ TimePicker是一个时间选择器组件
 ### 启动
 
 ```javascript
+import {TimePicker} from './qing.js';
+
 new TimePicker({
     id: 'time-picker',
     lang: 'zh',
@@ -74,16 +88,6 @@ new TimePicker({
 
 Paginator是一个分页组件
 
-页码规则：
-
-- 首页和尾页必须展示
-
-- 如果有省略号则首尾只展示一条，当前页前后各展示两条共五条，一边没有空间则叠加到另一边
-
-- 首尾页与当前页五条可以重合
-
-- 跨度大于等于两条才出现省略号
-
 ### 挂载
 
 ```html
@@ -93,6 +97,8 @@ Paginator是一个分页组件
 ### 启动
 
 ```javascript
+import {Paginator} from './qing.js';
+
 new Paginator({
     id: 'paginator',
     pageCount: 33,
@@ -123,8 +129,6 @@ new Paginator({
 
 Tree是一个树结构组件
 
-树的展开关闭有动画效果
-
 ### 挂载
 
 ```html
@@ -134,6 +138,8 @@ Tree是一个树结构组件
 ### 启动
 
 ```javascript
+import {Tree} from './qing.js';
+
 new Tree({
     id: 'tree',
     data: [
@@ -175,7 +181,7 @@ new Tree({
 | data | array | [] | 要渲染的树形数据 |
 | checkable | boolean | true | 是否显示checkbox，即是否可选中 |
 | indent | number | 40 | 每一级的缩进距离，单位为px |
-| expand | string | 'none' | 初始伸展方式，三个可选项，"none"是全部不展开，"all"是全部展开，"first"是第一节展开 |
+| expand | string | "none" | 初始伸展方式，三个可选项，"none"是全部不展开，"all"是全部展开，"first"是第一节展开 |
 | callback | function(data: array) | () => {} | 回调，{param}选中后的数据，checkable为true时生效 |
 
 ## Cascader
@@ -193,6 +199,8 @@ Cascader是一个级联选择器组件
 ### 启动
 
 ```javascript
+import {Cascader} from './qing.js';
+
 new Cascader({
     id: 'cascader',
     data: [
@@ -253,6 +261,8 @@ Checkbox是一个多选框组件
 ### 启动
 
 ```javascript
+import {Checkbox} from './qing.js';
+
 new Checkbox({
     classes: 'checkbox',
     indeterminateIndex: 0,
@@ -300,6 +310,8 @@ Radio是一个单选框组件
 ### 启动
 
 ```javascript
+import {Radio} from './qing.js';
+
 new Radio({
     classes: 'radio',
     data: [
@@ -343,6 +355,8 @@ Switch是一个开关组件
 ### 启动
 
 ```javascript
+import {Switch} from './qing.js';
+
 new Switch({
     id: 'switch',
     checked: false,
@@ -377,6 +391,8 @@ InputNumber是一个计数器组件
 ### 启动
 
 ```javascript
+import {InputNumber} from './qing.js';
+
 new InputNumber({
     id: 'input-number',
     checked: false,
