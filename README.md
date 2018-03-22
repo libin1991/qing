@@ -38,4 +38,36 @@ new DatePicker({
 | id | string | 'date-picker' | 挂载标签的id |
 | yearRange | array | [1970, 2050] | 年份选择的范围，必须包含当年 |
 | lang | string | 'zh' | 中文是'zh'，英文是'en' |
-| callback | function(date: string) | () => {} | 回调，{param}: 选择的年月日，格式为'YYYY-MM-DD' |
+| callback | function(date: string) | () => {} | 回调，@{param}选择的年月日，格式为'YYYY-MM-DD' |
+
+## TimePicker
+
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/time-picker.png)
+
+TimePicker是一个时间选择器
+
+支持回到现在按钮，支持中英文
+
+### 挂载
+
+```html
+<div id="time-picker"></div>
+```
+
+### 启动
+
+```javascript
+new TimePicker({
+    id: 'time-picker',
+    lang: 'zh',
+    callback: callback,
+});
+```
+
+### API
+
+| 参数 | 类型 | 默认值 | 说明 |
+|:---:|:---:|:---:|:---:|
+| id | string | 'time-picker' | 挂载标签的id |
+| lang | string | 'zh' | 中文是'zh'，英文是'en' |
+| callback | function(time: string) | () => {} | 回调，@{param}选择的时分秒，格式为'HH : MM : SS' |
