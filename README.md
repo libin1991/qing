@@ -116,3 +116,64 @@ new Paginator({
 | showQuickJumper | boolean | false | 是否显示快速跳转至某页的输入框 |
 | lang | string | "zh" | 中文是"zh"，英文是"en" |
 | callback | function(position: number, pageSize: number) | () => {} | 回调，{param}当前页，{param}每页条数 |
+
+## Tree
+
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/tree.png)
+
+Tree是一个树结构组件
+
+树的展开关闭有动画效果
+
+### 挂载
+
+```html
+<div id="tree"></div>
+```
+
+### 启动
+
+```javascript
+new Tree({
+    id: 'tree',
+    data: [
+        {
+            label: '霍思燕',
+            sub: [
+                {
+                    label: '江疏影',
+                },
+                {
+                    label: '倪妮',
+                },
+            ],
+        },
+        {
+            label: '高圆圆',
+            sub: [
+                {
+                    label: '张雨绮',
+                },
+                {
+                    label: '宋佳',
+                },
+            ],
+        },
+    ],
+    checkable: true,
+    indent: 40,
+    expand: 'first',
+    callback: callback,
+});
+```
+
+### API
+
+| 参数 | 类型 | 默认值 | 说明 |
+|:---|:---|:---|:---|
+| id | string | "tree" | 挂载标签的id |
+| data | array | [] | 要渲染的树形数据 |
+| checkable | boolean | true | 是否显示checkbox，即是否可选中 |
+| indent | number | 40 | 每一级的缩进距离，单位为px |
+| expand | string | 'none' | 初始伸展方式，三个可选项，"none"是全部不展开，"all"是全部展开，"first"是第一节展开 |
+| callback | function(data: array) | () => {} | 回调，{param}选中后的数据，checkable为true时生效 |
