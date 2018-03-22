@@ -12,12 +12,20 @@
 
 DatePicker是一个日期选择器
 
+支持两种方式的年份、月份选择，支持回到今天按钮，支持中英文
+
+### 挂载
+
+```html
+<div id="date-picker"></div>
+```
+
 ### 启动
 
 ```javascript
 new DatePicker({
     id: 'date-picker',
-    yearRange: [1970, 2020],
+    yearRange: [2000, 2020],
     lang: 'zh',
     callback: callback,
 });
