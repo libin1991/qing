@@ -8,10 +8,12 @@
 
 ## DatePicker
 
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/date-picker.png)
+
 API
 
 | 参数 | 类型 | 默认值 | 说明 |
-|:---:|:---:|:---:|:---:|
+|---|---|---|---|
 | id | string | 'date-picker' | 挂载标签的id |
 | yearRange | array | [1970, 2050] | 年份选择的范围，必须包含当年 |
 | lang | string | 'zh' | 中文是'zh'，英文是'en' |
