@@ -235,3 +235,51 @@ new Cascader({
 | trigger | string | "click" | 触发下一级的方式，两个可选项，"click"是鼠标点击触发，"hover"是鼠标悬停触发 |
 | seperator | string | " / " | 分隔符 |
 | callback | function(path: string) | () => {} | 回调，{param}选中的路径 |
+
+## Checkbox
+
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/checkbox.png)
+
+Checkbox是一个多选框组件
+
+### 挂载
+
+```html
+<div class="checkbox"></div>
+<div class="checkbox"></div>
+<div class="checkbox"></div>
+```
+
+### 启动
+
+```javascript
+new Checkbox({
+    classes: 'checkbox',
+    indeterminateIndex: 0,
+    data: [
+        {
+            checked: false,
+            disabled: false,
+        },
+        {
+            checked: false,
+            disabled: false,
+        },
+        {
+            checked: false,
+            disabled: false,
+        },
+    ],
+    callback: callback,
+});
+```
+
+### API
+
+| 参数 | 类型 | 默认值 | 说明 |
+|:---|:---|:---|:---|
+| classes | string | "checkbox" | 挂载标签的class |
+| indeterminateIndex | number | - | 全选全不选checkbox的索引 |
+| data | array | [] | 渲染checked或者disabled的数据 |
+| callback | function(data: array, i: number) | () => {} | 回调，{param}选中后的数据，{param}选中checkbox的索引，如果选中indeterminate，返回"indeterminate" |
+
