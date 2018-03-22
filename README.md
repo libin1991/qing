@@ -418,3 +418,7 @@ new InputNumber({
 ## 说明文档
 
 [DatePicker](https://github.com/veedrin/qing/blob/master/doc/v1.0/DatePicker.md)
+
+## License
+
+MIT
