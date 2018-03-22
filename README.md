@@ -5,9 +5,9 @@
 <br>
 
 > QingUI是一个UI组件库<br>
-> 目前拥有的组件：DatePicker, TimePicker, Paginator, Tree, Cascader, Checkbox, Radio, Switch, InputNumber, Input
-> ES6语法编写，无依赖
-> 原生模块化，Chrome63以上支持，请开启静态服务器预览效果，[静态服务器传送门](https://github.com/veedrin/qing/tree/master/lib)
+> 目前拥有的组件：DatePicker, TimePicker, Paginator, Tree, Cascader, Checkbox, Radio, Switch, InputNumber, Input<br>
+> ES6语法编写，无依赖<br>
+> 原生模块化，Chrome63以上支持，请开启静态服务器预览效果，[静态服务器传送门](https://github.com/veedrin/qing/tree/master/lib)<br>
 > 采用CSS变量配置样式
 
 ## DatePicker
