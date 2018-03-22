@@ -145,7 +145,7 @@ class DatePicker extends TimeCommon {
     $troughEvent() {
         const self = this;
         const curtainCL = this.$curtain.classList;
-        const arrowCL = this.$trough.querySelector('.view').classList;
+        const arrowCL = this.$trough.querySelector('.arrow').classList;
         this.$trough.addEventListener('click', function(event) {
             event.stopPropagation();
             arrowCL.toggle('active');
@@ -744,7 +744,7 @@ class Paginator {
         this.$mount = document.querySelector(`#${id}`);
         // 页数
         this.pageCount = pageCount;
-        // 是否显示调整每页条数下拉框
+        // 是否显示调整每页条数的下拉框
         this.showSizeChanger = showSizeChanger;
         // 每页条数选项
         this.pageSizeOptions = pageSizeOptions;
@@ -1074,6 +1074,7 @@ class Tree {
     } = {}) {
         this.$mount = document.querySelector(`#${id}`);
         this.data = data;
+        // 是否显示checkbox
         this.checkable = checkable;
         // 每一级的缩进距离
         this.indent = indent;
@@ -1366,7 +1367,7 @@ class Cascader {
     constructor({
         id = 'cascader',
         data = [],
-        searchable,
+        searchable = false,
         debounce = 300,
         trigger = 'click',
         seperator = ' / ',
