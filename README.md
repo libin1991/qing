@@ -327,3 +327,75 @@ new Radio({
 | classes | string | "radio" | 挂载标签的class |
 | data | array | [] | 渲染checked或者disabled的数据 |
 | callback | function(data: array, i: number) | () => {} | 回调，{param}选中后的数据，{param}选中的索引 |
+
+## Switch
+
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/switch.png)
+
+Switch是一个开关组件
+
+### 挂载
+
+```html
+<div id="switch"></div>
+```
+
+### 启动
+
+```javascript
+new Switch({
+    id: 'switch',
+    checked: false,
+    disabled: false,
+    size: 'default',
+    callback: callback,
+});
+```
+
+### API
+
+| 参数 | 类型 | 默认值 | 说明 |
+|:---|:---|:---|:---|
+| id | string | "switch" | 挂载标签的id |
+| checked | boolean | false | 初始是否选中 |
+| disabled | boolean | false | 是否置灰 |
+| size | string | "default" | 开关尺寸，两个可选项，默认"default"，小尺寸"small" |
+| callback | function(checked: boolean) | () => {} | 回调，{param}是否选中 |
+
+## InputNumber
+
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/input-number.png)
+
+InputNumber是一个计数器组件
+
+### 挂载
+
+```html
+<div id="input-number"></div>
+```
+
+### 启动
+
+```javascript
+new InputNumber({
+    id: 'input-number',
+    checked: false,
+    disabled: false,
+    size: 'default',
+    callback: callback,
+});
+```
+
+### API
+
+| 参数 | 类型 | 默认值 | 说明 |
+|:---|:---|:---|:---|
+| id | string | "input-number" | 挂载标签的id |
+| initValue | number | 1 | 初始数值 |
+| step | number | 1 | 步长 |
+| min | number | - | 允许的最小值，要考虑到初始值和步长 |
+| max | number | - | 允许的最大值，要考虑到初始值和步长 |
+| size | string | "default" | 计数器尺寸，两个可选项，默认"default"，小尺寸"small" |
+| disabled | boolean | false | 是否置灰 |
+| callback | function(value: number, oldValue: number, type: string) | () => {} | 回调，{param}当前值，{param}上一次的值，{param}计数类型，有"decrease"，"increase"，"input" |
+
