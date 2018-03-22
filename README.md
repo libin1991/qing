@@ -67,7 +67,7 @@ new TimePicker({
 ### API
 
 | 参数 | 类型 | 默认值 | 说明 |
-|:---:|:---:|:---:|:---:|
+|:---|:---|:---|:---|
 | id | string | 'time-picker' | 挂载标签的id |
 | lang | string | 'zh' | 中文是'zh'，英文是'en' |
 | callback | function(time: string) | () => {} | 回调，@{param}选择的时分秒，格式为'HH : MM : SS' |
