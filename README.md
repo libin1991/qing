@@ -338,7 +338,7 @@ new Radio({
 |:---|:---|:---|:---|
 | classes | string | "radio" | 挂载标签的class |
 | data | array | [] | 渲染checked或者disabled的数据 |
-| callback | function(data: array, i: number) | () => {} | 回调，{param}选中后的数据，{param}选中的索引 |
+| callback | function(data: array, i: number) | () => {} | 回调，{param}选中后的数据，{param}选中radio的索引 |
 
 ## Switch
 
