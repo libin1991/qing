@@ -840,24 +840,32 @@ class Paginator {
                 this.model.push(i);
             }
         } else {
-            if (p < 6) {
-                if (p < 4) {
-                    this.model = [1, 2, 3, 4, 5, 0, c];
-                } else if (p === 4) {
-                    this.model = [1, 2, 3, 4, 5, 6, 0, c];
-                } else {
-                    this.model = [1, 2, 3, 4, 5, 6, 7, 0, c];
+            if (p < 4) {
+                for (let i = 1; i <= 5; i++) {
+                    this.model.push(i);
                 }
+                this.model.push(0, c);
+            } else if (p < 6) {
+                for (let i = 1; i <= p + 2; i++) {
+                    this.model.push(i);
+                }
+                this.model.push(0, c);
             } else {
                 if (p < c - 4) {
-                    this.model = [1, 0, p - 2, p - 1, p, p + 1, p + 2, 0, c];
+                    this.model.push(1, 0);
+                    for (let i = p - 2; i <= p + 2; i++) {
+                        this.model.push(i);
+                    }
+                    this.model.push(0, c);
+                } else if (p < c - 1) {
+                    this.model.push(1, 0);
+                    for (let i = p - 2; i <= c; i++) {
+                        this.model.push(i);
+                    }
                 } else {
-                    if (p === c - 4) {
-                        this.model = [1, 0, p - 2, p - 1, c - 4, c - 3, c - 2, c - 1, c];
-                    } else if (p === c - 3) {
-                        this.model = [1, 0, p - 2, c - 4, c - 3, c - 2, c - 1, c];
-                    } else {
-                        this.model = [1, 0, c - 4, c - 3, c - 2, c - 1, c];
+                    this.model.push(1, 0);
+                    for (let i = c - 4; i <= c; i++) {
+                        this.model.push(i);
                     }
                 }
             }
