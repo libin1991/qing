@@ -417,4 +417,4 @@ new InputNumber({
 
 ## License
 
-MIT
+[MIT](https://github.com/veedrin/qing/blob/master/LICENSE)
