@@ -8,7 +8,7 @@
 
 如果使用原生模块，浏览器会阻止资源请求，报错信息如下
 
-`Access to Script at 'file:///D:/qing/qing.js' from origin 'null' has been blocked by CORS policy: Invalid response. Origin 'null' is therefore not allowed access.`
+`Access to Script at 'file:///D:/Qing/qing.js' from origin 'null' has been blocked by CORS policy: Invalid response. Origin 'null' is therefore not allowed access.`
 
 ## 如何开启静态服务器
 
