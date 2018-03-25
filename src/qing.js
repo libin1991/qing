@@ -786,25 +786,25 @@ class Paginator {
 
     actPerEvent() {
         this.buildModel();
-        this.$barRender();
+        this.renderBar();
         this.$pageEvent();
     }
 
     render() {
-        let template = '<div class="qing qing-paginator">';
-        template += `
+        let tpl = '<div class="qing qing-paginator">';
+        tpl += `
             <div class="square end prev">﹤</div>
             <div class="bar"></div>
             <div class="square end next">﹥</div>
         `;
-        if (this.showSizeChanger) {
+        if (this.showSizeChanger === true) {
             const perPage = this.lang === 'en' ? 'page' : '页';
             // 下拉列表的模板
             let optionTpl = '';
             for (const item of this.pageSizeOptions) {
                 optionTpl += `<div class="option">${item}&nbsp;/&nbsp;${perPage}</div>`;
             }
-            template += `
+            tpl += `
                 <div class="combobox">
                     <div class="show">
                         <span class="size">${this.pageSize}</span>
@@ -815,16 +815,16 @@ class Paginator {
                 </div>
             `;
         }
-        if (this.showQuickJumper) {
-            template += `
+        if (this.showQuickJumper === true) {
+            tpl += `
                 <div class="jumper">
                     <span class="goto">${this.lang === 'en' ? 'Goto' : '前往'}</span>
                     <input class="jump" type="text">
                 </div>
             `;
         }
-        template += '</div>';
-        this.$mount.innerHTML = template;
+        tpl += '</div>';
+        this.$mount.innerHTML = tpl;
     }
 
     buildModel() {
@@ -864,20 +864,20 @@ class Paginator {
         }
     }
 
-    $barRender() {
-        let template = '';
+    renderBar() {
+        let tpl = '';
         for (const item of this.model) {
             if (item > 0) {
                 if (this.position !== item) {
-                    template += `<div class="square page">${item}</div>`;
+                    tpl += `<div class="square page">${item}</div>`;
                 } else {
-                    template += `<div class="square page active">${item}</div>`;
+                    tpl += `<div class="square page active">${item}</div>`;
                 }
             } else {
-                template += '<div class="square gap">···</div>';
+                tpl += '<div class="square gap">···</div>';
             }
         }
-        this.$bar.innerHTML = template;
+        this.$bar.innerHTML = tpl;
         // 控制prev和next是否置灰
         // 如果只有一页，则this.pageCount === 1
         if (this.pageCount === 1) {
