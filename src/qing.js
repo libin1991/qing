@@ -1238,22 +1238,22 @@ class Tree {
 
     $cbEvent(item, action) {
         const $cb = item.cb;
-        const cl = $cb.classList;
+        const CL = $cb.classList;
         switch (action) {
             case 'all':
                 item.checked = true;
-                cl.remove('somechecked');
-                cl.add('checked');
+                CL.contains('somechecked') ? CL.remove('somechecked') : '';
+                CL.add('checked');
                 break;
             case 'some':
                 item.checked = false;
-                cl.remove('checked');
-                cl.add('somechecked');
+                CL.contains('checked') ? CL.remove('checked') : '';
+                CL.add('somechecked');
                 break;
             case 'none':
                 item.checked = false;
-                cl.remove('somechecked');
-                cl.remove('checked');
+                CL.contains('somechecked') ? CL.remove('somechecked') : '';
+                CL.contains('checked') ? CL.remove('checked') : '';
                 break;
         }
     }
@@ -1275,11 +1275,11 @@ class Tree {
     }
 
     fatherCbsEvent(queue) {
-        const $fatherItem = this.findFatherItem(queue);
-        if (!$fatherItem) {
+        const fatherItem = this.findFatherItem(queue);
+        if (!fatherItem) {
             return;
         }
-        const $siblingCbs = this.findSiblingCbs($fatherItem.sub);
+        const $siblingCbs = this.findSiblingCbs(fatherItem.sub);
         let allFlag = true;
         let noneFlag = true;
         for (const $item of $siblingCbs) {
@@ -1296,13 +1296,13 @@ class Tree {
             }
         }
         if (allFlag) {
-            this.$cbEvent($fatherItem, 'all');
+            this.$cbEvent(fatherItem, 'all');
         } else if (noneFlag) {
-            this.$cbEvent($fatherItem, 'none');
+            this.$cbEvent(fatherItem, 'none');
         } else {
-            this.$cbEvent($fatherItem, 'some');
+            this.$cbEvent(fatherItem, 'some');
         }
-        this.fatherCbsEvent($fatherItem.queue);
+        this.fatherCbsEvent(fatherItem.queue);
     }
 
     findFatherItem(queue) {
@@ -1311,16 +1311,16 @@ class Tree {
         if (n === 0) {
             return;
         }
-        let $fatherItem = this.cbTree;
+        let fatherItem = this.cbTree;
         for (let i = 0; i < n; i++) {
             const char = queue.charAt(i);
             if (i < n - 1) {
-                $fatherItem = $fatherItem[char].sub;
+                fatherItem = fatherItem[char].sub;
             } else {
-                $fatherItem = $fatherItem[char];
+                fatherItem = fatherItem[char];
             }
         }
-        return $fatherItem;
+        return fatherItem;
     }
 
     findSiblingCbs($sub) {
