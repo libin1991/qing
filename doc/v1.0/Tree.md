@@ -292,7 +292,7 @@ this.buildCbTree(this.$mount.firstElementChild, {sub: this.cbTree});
 
 它自己只有两种状态，要么`checked`，要么去除`checked`
 
-如果它有子项，则所有子项以及孙项以及所有的后代项跟随它的脚部，要么全部`checked`，要么全部去除`checked`
+如果它有子项，则所有子项以及孙项以及所有的后代项跟随它的脚步，要么全部`checked`，要么全部去除`checked`
 
 但是如果它有父项（它是有可能没有父项的，如果自己是顶层项的话），需要根据自己的兄弟来决定父项的`checked`属性，依照这个逻辑往上递归
 
