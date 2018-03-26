@@ -464,7 +464,7 @@ fatherCbsEvent(queue) {
 
 用户想在回调里拿到的是一开始传进来的data呀
 
-不过这好办，因为cbTree好data的结构是一毛一样的
+不过这好办，因为cbTree和data的结构是一毛一样的
 
 只需要一个递归就解决问题
 
