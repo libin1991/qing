@@ -1,4 +1,3 @@
-
 > QingUI是一个UI组件库<br>
 > 目前拥有的组件：DatePicker, TimePicker, Paginator, Tree, Cascader, Checkbox, Radio, Switch, InputNumber, Input<br>
 > ES6语法编写，无依赖<br>
