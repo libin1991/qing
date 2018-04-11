@@ -10,8 +10,6 @@
 > 原生模块化，Chrome63以上支持，请开启静态服务器预览效果，[静态服务器传送门](https://github.com/veedrin/qing/tree/master/server)<br>
 > 采用CSS变量配置样式
 
-> **Available For Job**
-
 ## DatePicker
 
 ![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/date-picker.png)
