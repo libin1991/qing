@@ -2,6 +2,7 @@
 
 <h1 align="center">QingUI</h1>
 
+![release](https://img.shields.io/github/release/veedrin/qing.svg)
 ![repo size](https://img.shields.io/github/repo-size/badges/shields.svg)
 ![code size](https://img.shields.io/github/languages/code-size/badges/shields.svg)
 ![last commit](https://img.shields.io/github/last-commit/veedrin/qing.svg)
