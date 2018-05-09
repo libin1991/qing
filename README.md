@@ -7,7 +7,7 @@
 ![repo size](https://img.shields.io/github/repo-size/badges/shields.svg)
 ![code size](https://img.shields.io/github/languages/code-size/badges/shields.svg)
 ![last commit](https://img.shields.io/github/last-commit/veedrin/qing.svg)
-![license](https://img.shields.io/github/license/mashape/apistatus.svg)
+![license](https://img.shields.io/github/license/veedrin/qing.svg)
 
 > QingUI是一个UI组件库<br>
 > 目前拥有的组件：DatePicker, TimePicker, Paginator, Tree, Cascader, Checkbox, Radio, Switch, InputNumber, Input<br>
