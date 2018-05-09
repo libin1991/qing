@@ -5,6 +5,8 @@
 <br>
 
 ![downloads](https://img.shields.io/github/downloads/veedrin/qing/total.svg)
+![license](https://img.shields.io/github/license/mashape/apistatus.svg)
+![size](https://img.shields.io/github/size/veedrin/qing/build/phaser-craft.min.js.svg)
 
 > QingUI是一个UI组件库<br>
 > 目前拥有的组件：DatePicker, TimePicker, Paginator, Tree, Cascader, Checkbox, Radio, Switch, InputNumber, Input<br>
