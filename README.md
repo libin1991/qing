@@ -4,7 +4,7 @@
 
 <br>
 
-[![downloads](https://img.shields.io/github/downloads/atom/atom/total.svg)]()
+![downloads](https://img.shields.io/github/downloads/veedrin/qing/total.svg)
 
 > QingUI是一个UI组件库<br>
 > 目前拥有的组件：DatePicker, TimePicker, Paginator, Tree, Cascader, Checkbox, Radio, Switch, InputNumber, Input<br>
