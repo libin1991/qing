@@ -2,11 +2,12 @@
 
 <h1 align="center">QingUI</h1>
 
-![release](https://img.shields.io/github/release/veedrin/qing.svg)
-![repo size](https://img.shields.io/github/repo-size/badges/shields.svg)
-![code size](https://img.shields.io/github/languages/code-size/badges/shields.svg)
-![last commit](https://img.shields.io/github/last-commit/veedrin/qing.svg)
-![license](https://img.shields.io/github/license/veedrin/qing.svg)
+![release](https://img.shields.io/github/release/veedrin/qing.svg?style=flat-square)
+![repo size](https://img.shields.io/github/repo-size/badges/shields.svg?style=flat-square)
+![code size](https://img.shields.io/github/languages/code-size/badges/shields.svg?style=flat-square)
+![last commit](https://img.shields.io/github/last-commit/veedrin/qing.svg?style=flat-square)
+![license](https://img.shields.io/github/license/veedrin/qing.svg?style=flat-square)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)
 
 <br>
 
