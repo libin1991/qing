@@ -5,7 +5,7 @@
 ![release](https://img.shields.io/github/release/veedrin/qing.svg?style=flat-square)
 ![code size](https://img.shields.io/github/languages/code-size/badges/shields.svg?style=flat-square)
 ![last commit](https://img.shields.io/github/last-commit/veedrin/qing.svg?style=flat-square)
-![license](https://img.shields.io/github/license/veedrin/qing.svg?style=flat-square&color=brightgreen)
+![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)
 
 <br>
