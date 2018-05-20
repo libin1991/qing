@@ -2,7 +2,7 @@
 
 <h1 align="center">QingUI</h1>
 
-![release](https://img.shields.io/github/release/veedrin/qing.svg?style=flat-square&colorB=ffff00)
+![release](https://img.shields.io/github/release/veedrin/qing.svg?style=flat-square&colorB=fedcba)
 ![last commit](https://img.shields.io/github/last-commit/veedrin/qing.svg?style=flat-square)
 ![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)
