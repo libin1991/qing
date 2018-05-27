@@ -3,8 +3,7 @@
 > ES6语法编写，无依赖<br>
 > 原生模块化，Chrome63以上支持，请开启静态服务器预览效果，[静态服务器传送门](https://github.com/veedrin/qing/tree/master/server)<br>
 > 采用CSS变量配置样式<br>
-> 辛苦造轮子，欢迎来github仓库star：[QingUI](https://github.com/veedrin/qing)<br>
-> 四月份找工作，求内推，坐标深圳
+> 辛苦造轮子，欢迎来github仓库star：[QingUI](https://github.com/veedrin/qing)
 
 ## 写在前面
 
