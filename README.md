@@ -2,11 +2,10 @@
 
 <h1 align="center">QingUI</h1>
 
-![release](https://img.shields.io/github/release/veedrin/qing.svg)
-![repo size](https://img.shields.io/github/repo-size/badges/shields.svg)
-![code size](https://img.shields.io/github/languages/code-size/badges/shields.svg)
-![last commit](https://img.shields.io/github/last-commit/veedrin/qing.svg)
-![license](https://img.shields.io/github/license/veedrin/qing.svg)
+![release](https://img.shields.io/badge/release-v1.0-brightgreen.svg?style=flat-square)
+![last commit](https://img.shields.io/github/last-commit/veedrin/qing.svg?style=flat-square)
+![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)
+![PRs](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)
 
 <br>
 
@@ -14,9 +13,10 @@
 > 目前拥有的组件：DatePicker, TimePicker, Paginator, Tree, Cascader, Checkbox, Radio, Switch, InputNumber, Input<br>
 > ES6语法编写，无依赖<br>
 > 原生模块化，Chrome63以上支持，请开启静态服务器预览效果，[静态服务器传送门](https://github.com/veedrin/qing/tree/master/server)<br>
-> 采用CSS变量配置样式
+> 采用CSS变量配置样式<br>
+> 相信原生的力量
 
-## DatePicker
+# DatePicker
 
 ![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/date-picker.png)
 
@@ -50,7 +50,7 @@ new DatePicker({
 | lang | string | "zh" | 中文是"zh"，英文是"en" |
 | callback | function(date: string) | () => {} | 回调，{param}选择的年月日，格式为"YYYY-MM-DD" |
 
-## TimePicker
+# TimePicker
 
 ![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/time-picker.png)
 
@@ -82,7 +82,7 @@ new TimePicker({
 | lang | string | "zh" | 中文是"zh"，英文是"en" |
 | callback | function(time: string) | () => {} | 回调，{param}选择的时分秒，格式为"HH : MM : SS" |
 
-## Paginator
+# Paginator
 
 ![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/paginator.png)
 
@@ -123,7 +123,7 @@ new Paginator({
 | lang | string | "zh" | 中文是"zh"，英文是"en" |
 | callback | function(position: number, pageSize: number) | () => {} | 回调，{param}当前页，{param}每页条数 |
 
-## Tree
+# Tree
 
 ![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/tree.png)
 
@@ -184,7 +184,7 @@ new Tree({
 | expand | string | "none" | 初始伸展方式，三个可选项，"none"是全部不展开，"all"是全部展开，"first"是第一节展开 |
 | callback | function(data: array) | () => {} | 回调，{param}选中后的数据，checkable为true时生效 |
 
-## Cascader
+# Cascader
 
 ![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/cascader.png)
 
@@ -244,7 +244,7 @@ new Cascader({
 | seperator | string | " / " | 分隔符 |
 | callback | function(path: string) | () => {} | 回调，{param}选中的路径 |
 
-## Checkbox
+# Checkbox
 
 ![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/checkbox.png)
 
@@ -293,7 +293,7 @@ new Checkbox({
 | data | array | [] | 渲染checked或者disabled的数据 |
 | callback | function(data: array, i: number) | () => {} | 回调，{param}选中后的数据，{param}选中checkbox的索引，如果选中indeterminate，返回"indeterminate" |
 
-## Radio
+# Radio
 
 ![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/radio.png)
 
@@ -340,7 +340,7 @@ new Radio({
 | data | array | [] | 渲染checked或者disabled的数据 |
 | callback | function(data: array, i: number) | () => {} | 回调，{param}选中后的数据，{param}选中radio的索引 |
 
-## Switch
+# Switch
 
 ![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/switch.png)
 
@@ -376,7 +376,7 @@ new Switch({
 | size | string | "default" | 开关尺寸，两个可选项，默认"default"，小尺寸"small" |
 | callback | function(checked: boolean) | () => {} | 回调，{param}是否选中 |
 
-## InputNumber
+# InputNumber
 
 ![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/input-number.png)
 
@@ -415,6 +415,6 @@ new InputNumber({
 | disabled | boolean | false | 是否置灰 |
 | callback | function(value: number, oldValue: number, type: string) | () => {} | 回调，{param}当前值，{param}上一次的值，{param}计数类型，有"decrease"，"increase"，"input" |
 
-## License
+# License
 
 [MIT](https://github.com/veedrin/qing/blob/master/LICENSE)
