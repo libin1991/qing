@@ -15,8 +15,6 @@
 
 这一篇介绍DatePicker日期选择器
 
-最重要的，求star，求fork，求内推
-
 > [https://github.com/veedrin/qing](https://github.com/veedrin/qing)
 
 ## 少废话，先上图
@@ -254,7 +252,5 @@ DatePicker比较核心的逻辑就在这里了
 400行左右的代码，每个人都可以尝试着写一遍，很有意思的
 
 下一篇文章介绍TimePicker，敬请期待
-
-最后，求star，求fork，求内推
 
 > [https://github.com/veedrin/qing](https://github.com/veedrin/qing)
