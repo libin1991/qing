@@ -1,23 +1,26 @@
-![logo](https://raw.githubusercontent.com/veedrin/qing/master/doc/logo/logo.png)
+![logo](https://raw.githubusercontent.com/veedrin/qing/master/logo/logo.png)
 
 <h1 align="center">QingUI</h1>
 
-![release](https://img.shields.io/badge/release-v1.0-brightgreen.svg?style=flat-square)
-![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)
 ![PRs](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)
 
 <br>
 
-> QingUI是一个UI组件库<br>
-> 目前拥有的组件：DatePicker, TimePicker, Paginator, Tree, Cascader, Checkbox, Radio, Switch, InputNumber, Input<br>
-> ES6语法编写，无依赖<br>
-> 原生模块化，Chrome63以上支持，请开启静态服务器预览效果，[静态服务器传送门](https://github.com/veedrin/qing/tree/master/server)<br>
-> 采用CSS变量配置样式<br>
+> QingUI是一个UI组件库
+>
+> 目前拥有的组件：DatePicker, TimePicker, Paginator, Tree, Cascader, Checkbox, Radio, Switch, InputNumber, Input
+>
+> ES6语法编写，无依赖
+>
+> 原生模块化，Chrome63以上支持，请开启本地服务器预览效果
+>
+> 采用CSS变量配置样式
+>
 > 相信原生的力量
 
 # DatePicker
 
-![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/date-picker.png)
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/img/date-picker.png)
 
 DatePicker是一个日期选择器组件
 
@@ -51,7 +54,7 @@ new DatePicker({
 
 # TimePicker
 
-![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/time-picker.png)
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/img/time-picker.png)
 
 TimePicker是一个时间选择器组件
 
@@ -83,7 +86,7 @@ new TimePicker({
 
 # Paginator
 
-![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/paginator.png)
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/img/paginator.png)
 
 Paginator是一个分页组件
 
@@ -124,7 +127,7 @@ new Paginator({
 
 # Tree
 
-![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/tree.png)
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/img/tree.png)
 
 Tree是一个树结构组件
 
@@ -185,7 +188,7 @@ new Tree({
 
 # Cascader
 
-![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/cascader.png)
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/img/cascader.png)
 
 Cascader是一个级联选择器组件
 
@@ -245,7 +248,7 @@ new Cascader({
 
 # Checkbox
 
-![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/checkbox.png)
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/img/checkbox.png)
 
 Checkbox是一个多选框组件
 
@@ -294,7 +297,7 @@ new Checkbox({
 
 # Radio
 
-![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/radio.png)
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/img/radio.png)
 
 Radio是一个单选框组件
 
@@ -341,7 +344,7 @@ new Radio({
 
 # Switch
 
-![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/switch.png)
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/img/switch.png)
 
 Switch是一个开关组件
 
@@ -377,7 +380,7 @@ new Switch({
 
 # InputNumber
 
-![img failed](https://raw.githubusercontent.com/veedrin/qing/master/doc/img/input-number.png)
+![img failed](https://raw.githubusercontent.com/veedrin/qing/master/img/input-number.png)
 
 InputNumber是一个计数器组件
 
